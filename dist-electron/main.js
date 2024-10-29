@@ -1,90 +1,70 @@
-var __defProp = Object.defineProperty;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-import { app, BrowserWindow, ipcMain } from "electron";
-import { createRequire } from "module";
-import path from "node:path";
-import { fileURLToPath } from "url";
-import { fileURLToPath as fileURLToPath$1 } from "node:url";
-const require2 = createRequire(import.meta.url);
-const Database = require2("better-sqlite3");
-const __filename = fileURLToPath(import.meta.url);
-const filename = process.env.NODE_ENV === "development" ? "./demo_table.db" : path.join(__filename, "./demo_table.db");
-const db = new Database(filename);
-db.pragma("journal_mode = WAL");
-function createTables(newdb) {
-  let sql1 = `
+var u = Object.defineProperty;
+var b = (t, e, n) => e in t ? u(t, e, { enumerable: !0, configurable: !0, writable: !0, value: n }) : t[e] = n;
+var T = (t, e, n) => b(t, typeof e != "symbol" ? e + "" : e, n);
+import { app as a, BrowserWindow as R, ipcMain as r } from "electron";
+import { createRequire as w } from "module";
+import o from "node:path";
+import { fileURLToPath as O } from "url";
+import { fileURLToPath as L } from "node:url";
+const g = w(import.meta.url), I = g("better-sqlite3"), f = O(import.meta.url), A = process.env.NODE_ENV === "development" ? "./demo_table.db" : o.join(f, "./demo_table.db"), E = new I(A);
+E.pragma("journal_mode = WAL");
+function S(t) {
+  t.exec(`
 				CREATE TABLE IF NOT EXISTS Notes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
         content TEXT NOT NULL,
         created_time INTEGER DEFAULT 0
     );
-    `;
-  newdb.exec(sql1);
+    `);
 }
-createTables(db);
-const Database$1 = { db };
-class DBService {
-  constructor(db2) {
-    __publicField(this, "db");
-    this.db = db2;
+S(E);
+const D = { db: E };
+class P {
+  constructor(e) {
+    T(this, "db");
+    this.db = e;
   }
-  insertNote(note) {
-    const time = (/* @__PURE__ */ new Date()).getTime();
-    const stm = this.db.prepare(
+  insertNote(e) {
+    const n = (/* @__PURE__ */ new Date()).getTime(), d = this.db.prepare(
       "INSERT INTO Notes (title, content, created_time) VALUES (@title, @content, @created_time) RETURNING *"
-    );
-    const result = stm.run({ ...note, ...{ created_time: time } });
-    const stmnew = this.db.prepare("SELECT * FROM Notes where id = @id");
-    const created = stmnew.get({
-      id: result.lastInsertRowid
+    ).run({ ...e, created_time: n }), l = this.db.prepare("SELECT * FROM Notes where id = @id").get({
+      id: d.lastInsertRowid
     });
-    console.log(created);
-    return created;
+    return console.log(l), l;
   }
-  updateNote(todo) {
-    const { title, content, created_time, id } = todo;
-    const stm = this.db.prepare(
+  updateNote(e) {
+    const { title: n, content: p, created_time: d, id: c } = e;
+    return this.db.prepare(
       "UPDATE Notes SET title = @title, content = @content, created_time=@created_time WHERE id = @id RETURNING *"
-    );
-    stm.run({ title, content, created_time, id });
-    const stmnew = this.db.prepare("SELECT * FROM Notes where id = @id");
-    const created = stmnew.get({
-      id
+    ).run({ title: n, content: p, created_time: d, id: c }), this.db.prepare("SELECT * FROM Notes where id = @id").get({
+      id: c
     });
-    return created;
   }
-  deleteNote(id) {
-    const stm = this.db.prepare("DELETE FROM Notes WHERE id = @id");
-    return stm.run({ id });
+  deleteNote(e) {
+    return this.db.prepare("DELETE FROM Notes WHERE id = @id").run({ id: e });
   }
   getAllNotes() {
-    const stm = this.db.prepare(
+    return this.db.prepare(
       `SELECT id, title, content, created_time 
     FROM Notes 
     ORDER BY created_time DESC;`
-    );
-    return stm.all();
+    ).all();
   }
-  getOneNote(id) {
-    const stm = this.db.prepare("SELECT * FROM Notes where id = @id");
-    return stm.get({ id });
+  getOneNote(e) {
+    return this.db.prepare("SELECT * FROM Notes where id = @id").get({ id: e });
   }
 }
-const __dirname = path.dirname(fileURLToPath$1(import.meta.url));
-const dbService = new DBService(Database$1.db);
-process.env.APP_ROOT = path.join(__dirname, "..");
-const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];
-const MAIN_DIST = path.join(process.env.APP_ROOT, "dist-electron");
-const RENDERER_DIST = path.join(process.env.APP_ROOT, "dist");
-process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, "public") : RENDERER_DIST;
-let win;
-function createWindow() {
-  win = new BrowserWindow({
-    icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
+const N = o.dirname(L(import.meta.url)), i = new P(D.db);
+process.env.APP_ROOT = o.join(N, "..");
+const m = process.env.VITE_DEV_SERVER_URL, q = o.join(process.env.APP_ROOT, "dist-electron"), _ = o.join(process.env.APP_ROOT, "dist");
+process.env.VITE_PUBLIC = m ? o.join(process.env.APP_ROOT, "public") : _;
+let s;
+function h() {
+  s = new R({
+    icon: o.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
     webPreferences: {
-      preload: path.join(__dirname, "preload.mjs")
+      preload: o.join(N, "preload.mjs")
     },
     width: 500,
     height: 600,
@@ -92,47 +72,23 @@ function createWindow() {
     maxHeight: 600,
     minWidth: 400,
     maxWidth: 1500
-  });
-  win.webContents.on("did-finish-load", () => {
-    win == null ? void 0 : win.webContents.send("main-process-message", (/* @__PURE__ */ new Date()).toLocaleString());
-  });
-  if (VITE_DEV_SERVER_URL) {
-    win.loadURL(VITE_DEV_SERVER_URL);
-  } else {
-    win.loadFile(path.join(RENDERER_DIST, "index.html"));
-  }
+  }), s.webContents.on("did-finish-load", () => {
+    s == null || s.webContents.send("main-process-message", (/* @__PURE__ */ new Date()).toLocaleString());
+  }), m ? s.loadURL(m) : s.loadFile(o.join(_, "index.html"));
 }
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-    win = null;
-  }
+a.on("window-all-closed", () => {
+  process.platform !== "darwin" && (a.quit(), s = null);
 });
-app.on("activate", () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
+a.on("activate", () => {
+  R.getAllWindows().length === 0 && h();
 });
-app.whenReady().then(() => {
-  ipcMain.handle("note:insert", async (_, todo) => {
-    return dbService.insertNote(todo);
-  });
-  ipcMain.handle("note:update", async (_, todo) => {
-    return dbService.updateNote(todo);
-  });
-  ipcMain.handle("note:delete", async (_, id) => {
-    dbService.deleteNote(id);
-  });
-  ipcMain.handle("note:getOne", async (_, id) => {
-    return dbService.getOneNote(id);
-  });
-  ipcMain.handle("note:getAll", async () => {
-    return dbService.getAllNotes();
-  });
-  createWindow();
+a.whenReady().then(() => {
+  r.handle("note:insert", async (t, e) => i.insertNote(e)), r.handle("note:update", async (t, e) => i.updateNote(e)), r.handle("note:delete", async (t, e) => {
+    i.deleteNote(e);
+  }), r.handle("note:getOne", async (t, e) => i.getOneNote(e)), r.handle("note:getAll", async () => i.getAllNotes()), h();
 });
 export {
-  MAIN_DIST,
-  RENDERER_DIST,
-  VITE_DEV_SERVER_URL
+  q as MAIN_DIST,
+  _ as RENDERER_DIST,
+  m as VITE_DEV_SERVER_URL
 };
