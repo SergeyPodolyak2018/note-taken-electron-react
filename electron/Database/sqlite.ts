@@ -1,16 +1,14 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const Database = require('better-sqlite3');
+const { app } = require('electron');
 
 import path from 'node:path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
 
 const filename =
   process.env.NODE_ENV === 'development'
     ? './demo_table.db'
-    : path.join(__filename, './demo_table.db');
+    : path.resolve(app.getPath('userData'), 'myDatabase.db');
 
 const db = new Database(filename);
 
