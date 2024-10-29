@@ -43,7 +43,18 @@ function createWindow() {
     maxHeight: 600,
     minWidth: 400,
     maxWidth: 1500,
+    show: false,
   });
+
+  const splash = new BrowserWindow({
+    width: 500,
+    height: 300,
+    transparent: true,
+    frame: false,
+    alwaysOnTop: true,
+  });
+  splash.loadFile(path.join(RENDERER_DIST, 'loader.html'));
+  splash.center();
 
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
@@ -56,6 +67,10 @@ function createWindow() {
     // win.loadFile('dist/index.html')
     win.loadFile(path.join(RENDERER_DIST, 'index.html'));
   }
+  setTimeout(function () {
+    splash.close();
+    win?.show();
+  }, 5000);
 }
 
 // Quit when all windows are closed, except on macOS. There, it's common
