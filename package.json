@@ -4,8 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build && electron-builder",
+    "dev": "VITE_DB_TYPE=sql vite",
+    "dev:json": "VITE_DB_TYPE=json vite",
+    "build": "tsc && vite build && VITE_DB_TYPE=sql electron-builder",
+    "build:json": "tsc && vite build &&  VITE_DB_TYPE=json electron-builder",
     "rebuild": "electron-rebuild -f -w better-sqlite3",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",

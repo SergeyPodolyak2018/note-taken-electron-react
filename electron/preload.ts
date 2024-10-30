@@ -1,5 +1,5 @@
 import { ipcRenderer, contextBridge } from 'electron';
-import { TNote } from './Database/Database.service.ts';
+import { TNote } from './Database/definitions/definitions.ts';
 
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld('ipcRenderer', {

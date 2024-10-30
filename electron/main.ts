@@ -1,13 +1,12 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
-import Database from './Database/sqlite';
+
+import { TNote } from './Database/definitions/definitions.ts';
 
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-import { DBService, TNote } from './Database/Database.service.ts';
-
-const dbService = new DBService(Database.db);
+import dbService from './Database/dbManager.ts';
 
 // The built directory structure
 //
@@ -78,6 +77,7 @@ function createWindow() {
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
+    dbService.saveAll();
     app.quit();
     win = null;
   }

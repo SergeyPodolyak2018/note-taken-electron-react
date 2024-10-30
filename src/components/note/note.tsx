@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { TNote } from '../../../electron/Database/Database.service';
+import { TNote } from '../../../electron/Database/definitions/definitions.ts';
 import { TNoteUI } from '../../definitions/main';
 import styles from './note.module.scss';
 import { DeleteButton } from '../buttons/deleteButton/deleteButton';

@@ -1,1 +1,30 @@
-"use strict";const n=require("electron");n.contextBridge.exposeInMainWorld("ipcRenderer",{on(...e){const[t,r]=e;return n.ipcRenderer.on(t,(o,...i)=>r(o,...i))},off(...e){const[t,...r]=e;return n.ipcRenderer.off(t,...r)},send(...e){const[t,...r]=e;return n.ipcRenderer.send(t,...r)},invoke(...e){const[t,...r]=e;return n.ipcRenderer.invoke(t,...r)},insertNote:e=>n.ipcRenderer.invoke("note:insert",e),deleteNote:e=>n.ipcRenderer.invoke("note:delete",e),getAllNotes:()=>n.ipcRenderer.invoke("note:getAll"),getOneNote:e=>n.ipcRenderer.invoke("note:getOne",e),updateNote:e=>n.ipcRenderer.invoke("note:update",e)});
+"use strict";
+const electron = require("electron");
+electron.contextBridge.exposeInMainWorld("ipcRenderer", {
+  on(...args) {
+    const [channel, listener] = args;
+    return electron.ipcRenderer.on(
+      channel,
+      (event, ...args2) => listener(event, ...args2)
+    );
+  },
+  off(...args) {
+    const [channel, ...omit] = args;
+    return electron.ipcRenderer.off(channel, ...omit);
+  },
+  send(...args) {
+    const [channel, ...omit] = args;
+    return electron.ipcRenderer.send(channel, ...omit);
+  },
+  invoke(...args) {
+    const [channel, ...omit] = args;
+    return electron.ipcRenderer.invoke(channel, ...omit);
+  },
+  // You can expose other APTs you need here.
+  // ...
+  insertNote: (todo) => electron.ipcRenderer.invoke("note:insert", todo),
+  deleteNote: (id) => electron.ipcRenderer.invoke("note:delete", id),
+  getAllNotes: () => electron.ipcRenderer.invoke("note:getAll"),
+  getOneNote: (id) => electron.ipcRenderer.invoke("note:getOne", id),
+  updateNote: (todo) => electron.ipcRenderer.invoke("note:update", todo)
+});
