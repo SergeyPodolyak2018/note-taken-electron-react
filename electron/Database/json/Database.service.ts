@@ -48,7 +48,6 @@ export class DBService {
     const existingNotes = [...this.dbInstance.getDatabase()];
     const index = existingNotes.findIndex((el) => el.id === id);
     return existingNotes.at(index);
-    // const stm = this.dbInstance.db.prepare(
   }
   saveAll() {
     this.dbInstance.saveAllData();

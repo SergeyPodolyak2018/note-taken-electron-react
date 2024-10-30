@@ -22,7 +22,6 @@ export class DBService {
     const created = stmnew.get({
       id: result.lastInsertRowid,
     }) as unknown as TNote;
-    console.log(created);
     return created;
   }
   updateNote(todo: TNote) {
